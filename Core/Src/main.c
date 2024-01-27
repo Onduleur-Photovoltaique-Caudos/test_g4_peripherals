@@ -95,6 +95,18 @@ unsigned int get_us_DWT(int slot)
 	return 0xFFFFFFFF;
 }
 
+void doPin(GPIO_TypeDef* port, uint16_t pin){
+	HAL_GPIO_WritePin(port, pin, GPIO_PIN_SET);
+	HAL_Delay(1000);
+	HAL_GPIO_WritePin(port, pin, GPIO_PIN_RESET);
+	HAL_Delay(1000);
+}
+void doPinFast(GPIO_TypeDef* port, uint16_t pin){
+	HAL_GPIO_WritePin(port, pin, GPIO_PIN_SET);
+	delay_us_DWT(10);
+	HAL_GPIO_WritePin(port, pin, GPIO_PIN_RESET);
+	delay_us_DWT(1);
+}
 
 /* USER CODE END 0 */
 
@@ -105,10 +117,11 @@ unsigned int get_us_DWT(int slot)
 int main(void)
 {
   /* USER CODE BEGIN 1 */
+	CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
 	DWT->CYCCNT = 0;
-  // Enable hi resolution counter
-	DWT->CTRL &= ~0x00000001;
-	DWT->CTRL |= 0x00000001;
+  // Enable cycle counter
+	DWT->CTRL &= ~DWT_CTRL_CYCCNTENA_Msk;
+	DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk;
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -138,7 +151,7 @@ int main(void)
   HAL_StatusTypeDef status;
   obInit.OptionType = OPTIONBYTE_USER;
   obInit.USERType = OB_USER_nSWBOOT0;
-  obInit.USERConfig = FLASH_OPTR_nSWBOOT0;
+  obInit.USERConfig = 0;// FLASH_OPTR_nSWBOOT0;
   //HAL_FLASH_OB_Unlock();
   status = HAL_FLASHEx_OBProgram(&obInit);
   uint32_t status2 = HAL_FLASH_GetError();
@@ -166,11 +179,27 @@ int main(void)
 #define eol_message "\n\r"
   statusTransmit = HAL_UART_Transmit(&huart2,(uint8_t*)eol_message, strlen(eol_message),1000);
 
+#define start_message "start value:"
+  statusTransmit = HAL_UART_Transmit(&huart2,(uint8_t*)start_message, strlen(start_message),1000);
+
+  uint32_t start = delay_us_DWT(1);
+
+  Int.toAXn(start, buffer, 11, true);
+  statusTransmit = HAL_UART_Transmit(&huart2,(uint8_t*)buffer, strlen(buffer),1000);
+
   /* USER CODE END 2 */
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+		HAL_GPIO_WritePin(T_PC13_GPIO_Port, T_PC13_Pin, GPIO_PIN_SET); // start at pin 2
+		HAL_Delay(1);
+		HAL_GPIO_WritePin(T_PC13_GPIO_Port, T_PC13_Pin, GPIO_PIN_RESET); // start at pin 2
+		HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_SET); // start at pin 2
+		HAL_Delay(200);
+		HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_RESET); // start at pin 2
+		HAL_Delay(200);
+		doPinFast(T_PC0_GPIO_Port, T_PC0_Pin);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -314,11 +343,6 @@ static void MX_USART2_UART_Init(void)
 
 }
 
-/**
-  * @brief GPIO Initialization Function
-  * @param None
-  * @retval None
-  */
 static void MX_GPIO_Init(void)
 {
   GPIO_InitTypeDef GPIO_InitStruct = {0};
@@ -326,7 +350,28 @@ static void MX_GPIO_Init(void)
 /* USER CODE END MX_GPIO_Init_1 */
 
   /* GPIO Ports Clock Enable */
+  __HAL_RCC_GPIOC_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOC, T_PC13_Pin|T_PC0_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pins : T_PC13_Pin T_PC0_Pin */
+  GPIO_InitStruct.Pin = T_PC13_Pin|T_PC0_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : LD2_Pin */
+  GPIO_InitStruct.Pin = LD2_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(LD2_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pins : PA9 PA10 */
   GPIO_InitStruct.Pin = GPIO_PIN_9|GPIO_PIN_10;
