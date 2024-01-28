@@ -51,7 +51,7 @@ I2C_HandleTypeDef hi2c1;
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
-
+OPAMP_HandleTypeDef hopamp3;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -377,6 +377,16 @@ static void MX_OPAMP3_Init(void)
 {
 
   /* USER CODE BEGIN OPAMP3_Init 0 */
+	OPAMP_InitTypeDef OPAMP_InitStruct = {0};
+	hopamp3.Init.PowerMode = OPAMP_POWERMODE_NORMALSPEED;
+	hopamp3.Init.Mode = OPAMP_PGA_MODE; //Programmable gain
+	hopamp3.Init.InvertingInput = OPAMP_INVERTINGINPUT_IO0; //VIM0
+	hopamp3.Init.NonInvertingInput = OPAMP_NONINVERTINGINPUT_IO0; //VINP
+	hopamp3.Init.InternalOutput = ENABLE; //no output, only internal to ADC3
+	hopamp3.Init.TimerControlledMuxmode = DISABLE; //no fancy mux mode
+	hopamp3.Init.PgaConnect = OPAMP_PGA_CONNECT_INVERTINGINPUT_IO0_BIAS; //be able to use the inverting input
+	hopamp3.Init.PgaGain = OPAMP_PGA_GAIN_64_OR_MINUS_63; //normal
+
 
   /* USER CODE END OPAMP3_Init 0 */
 
@@ -384,7 +394,10 @@ static void MX_OPAMP3_Init(void)
 
   /* USER CODE END OPAMP3_Init 1 */
   /* USER CODE BEGIN OPAMP3_Init 2 */
-
+	if (HAL_OPAMP_Init(&hopamp3) != HAL_OK)
+	{
+		Error_Handler();
+	}
   /* USER CODE END OPAMP3_Init 2 */
 
 }
