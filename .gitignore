@@ -2,3 +2,5 @@
 *.su
 *.cyclo
 *.d
+*.orig
+Backup/
