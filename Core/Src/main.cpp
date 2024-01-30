@@ -196,7 +196,7 @@ int main(void)
   HAL_ADC_Start(&hadc3);
   HAL_ADC_PollForConversion(&hadc3, 1000);
   uint32_t value = HAL_ADC_GetValue(&hadc3);
-  HAL_ADC_Stop(&hadc3);
+  //HAL_ADC_Stop(&hadc3);
 
   Int.toAXn(value, buffer, 11, true);
   statusTransmit = HAL_UART_Transmit(&huart2,(uint8_t*)buffer, strlen(buffer),1000);
@@ -219,10 +219,14 @@ int main(void)
 		HAL_Delay(200);
 
 
-	  HAL_ADC_Start(&hadc3);
+	  //LL_ADC_ClearFlag_EOC(hadc3.Instance);
+	  //LL_ADC_ClearFlag_EOS(hadc3.Instance);
+	  LL_ADC_ClearFlag_OVR(hadc3.Instance);
+      LL_ADC_REG_StartConversion(hadc3.Instance);
 	  HAL_ADC_PollForConversion(&hadc3, 1000);
+	  // vref: value 0x5a5
 	  value = HAL_ADC_GetValue(&hadc3);
-	  HAL_ADC_Stop(&hadc3);
+	  //HAL_ADC_Stop(&hadc3);
 
 	  Int.toAXn(value, buffer, 11, true);
 	  statusTransmit = HAL_UART_Transmit(&huart2,(uint8_t*)buffer, strlen(buffer),1000);
@@ -303,7 +307,7 @@ static void MX_ADC3_Init(void)
   hadc3.Init.ScanConvMode = ADC_SCAN_DISABLE;
   hadc3.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
   hadc3.Init.LowPowerAutoWait = DISABLE;
-  hadc3.Init.ContinuousConvMode = ENABLE;
+  hadc3.Init.ContinuousConvMode = DISABLE;
   hadc3.Init.NbrOfConversion = 1;
   hadc3.Init.DiscontinuousConvMode = DISABLE;
   hadc3.Init.ExternalTrigConv = ADC_SOFTWARE_START;
@@ -408,7 +412,7 @@ static void MX_OPAMP3_Init(void)
 	hopamp3.Init.InternalOutput = DISABLE; //no output, only internal to ADC3
 	hopamp3.Init.TimerControlledMuxmode = OPAMP_TIMERCONTROLLEDMUXMODE_DISABLE; //no fancy mux mode
 	hopamp3.Init.PgaConnect = OPAMP_PGA_CONNECT_INVERTINGINPUT_IO0_IO1_BIAS; //be able to use the inverting input
-	hopamp3.Init.PgaGain = OPAMP_PGA_GAIN_4_OR_MINUS_3; //normal
+	hopamp3.Init.PgaGain = OPAMP_PGA_GAIN_32_OR_MINUS_31; //normal
 	hopamp3.Init.UserTrimming = OPAMP_TRIMMING_FACTORY;
 	if (HAL_OPAMP_Init(&hopamp3) != HAL_OK)
 	{
@@ -419,15 +423,19 @@ static void MX_OPAMP3_Init(void)
 
   /* USER CODE BEGIN OPAMP3_Init 1 */
 #else
+// the following line: not generated
+	hopamp3.Init.InvertingInput = OPAMP_INVERTINGINPUT_IO0; //VIM0
+	// with gain 32 : reading is 0x120 for 1A into 0.01 ohms
   /* USER CODE END OPAMP3_Init 1 */
   hopamp3.Instance = OPAMP3;
   hopamp3.Init.PowerMode = OPAMP_POWERMODE_NORMALSPEED;
   hopamp3.Init.Mode = OPAMP_PGA_MODE;
+  hopamp3.Init.InvertingInput = OPAMP_INVERTINGINPUT_IO0; //VIM0
   hopamp3.Init.NonInvertingInput = OPAMP_NONINVERTINGINPUT_IO2;
   hopamp3.Init.InternalOutput = ENABLE;
   hopamp3.Init.TimerControlledMuxmode = OPAMP_TIMERCONTROLLEDMUXMODE_DISABLE;
-  hopamp3.Init.PgaConnect = OPAMP_PGA_CONNECT_INVERTINGINPUT_IO0;
-  hopamp3.Init.PgaGain = OPAMP_PGA_GAIN_2_OR_MINUS_1;
+  hopamp3.Init.PgaConnect = OPAMP_PGA_CONNECT_INVERTINGINPUT_IO0_BIAS;
+  hopamp3.Init.PgaGain = OPAMP_PGA_GAIN_32_OR_MINUS_31;
   hopamp3.Init.UserTrimming = OPAMP_TRIMMING_FACTORY;
   if (HAL_OPAMP_Init(&hopamp3) != HAL_OK)
   {
