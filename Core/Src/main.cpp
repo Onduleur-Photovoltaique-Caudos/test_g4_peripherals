@@ -24,6 +24,7 @@
 #include <stm32g4xx_hal_flash_ex.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include "Integer.h"
 /* USER CODE END Includes */
 
@@ -114,6 +115,8 @@ void doPinFast(GPIO_TypeDef* port, uint16_t pin){
 	delay_us_DWT(1);
 }
 
+uint32_t valueGlobal;
+
 /* USER CODE END 0 */
 
 /**
@@ -122,6 +125,7 @@ void doPinFast(GPIO_TypeDef* port, uint16_t pin){
   */
 int main(void)
 {
+
   /* USER CODE BEGIN 1 */
 	CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
 	DWT->CYCCNT = 0;
@@ -177,6 +181,7 @@ int main(void)
 
   int statusTransmit;
   char str[] = "start\n\r";
+  printf("start SWV\n");
   statusTransmit = HAL_UART_Transmit(&huart2,(uint8_t*)str, strlen(str),1000);
 
 #define intro_message "flash BYTES value:"
@@ -226,6 +231,7 @@ int main(void)
 	  HAL_ADC_PollForConversion(&hadc3, 1000);
 	  // vref: value 0x5a5
 	  value = HAL_ADC_GetValue(&hadc3);
+	  valueGlobal = value;
 	  //HAL_ADC_Stop(&hadc3);
 
 	  Int.toAXn(value, buffer, 11, true);
@@ -257,7 +263,13 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
   RCC_OscInitStruct.HSIState = RCC_HSI_ON;
   RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
-  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
+  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
+  RCC_OscInitStruct.PLL.PLLM = RCC_PLLM_DIV1;
+  RCC_OscInitStruct.PLL.PLLN = 10;
+  RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
+  RCC_OscInitStruct.PLL.PLLQ = RCC_PLLQ_DIV2;
+  RCC_OscInitStruct.PLL.PLLR = RCC_PLLR_DIV2;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
   {
     Error_Handler();
@@ -267,12 +279,12 @@ void SystemClock_Config(void)
   */
   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
                               |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
-  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_HSI;
+  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
 
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_0) != HAL_OK)
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK)
   {
     Error_Handler();
   }
@@ -362,7 +374,7 @@ static void MX_I2C1_Init(void)
 
   /* USER CODE END I2C1_Init 1 */
   hi2c1.Instance = I2C1;
-  hi2c1.Init.Timing = 0x00303D5B;
+  hi2c1.Init.Timing = 0x10909CEC;
   hi2c1.Init.OwnAddress1 = 0;
   hi2c1.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
   hi2c1.Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;
@@ -426,18 +438,22 @@ static void MX_OPAMP3_Init(void)
 // the following line: not generated
 	hopamp3.Init.InvertingInput = OPAMP_INVERTINGINPUT_IO0; //VIM0
 	// with gain 32 : reading is 0x120 for 1A into 0.01 ohms
+
   /* USER CODE END OPAMP3_Init 1 */
   hopamp3.Instance = OPAMP3;
   hopamp3.Init.PowerMode = OPAMP_POWERMODE_NORMALSPEED;
   hopamp3.Init.Mode = OPAMP_PGA_MODE;
-  hopamp3.Init.InvertingInput = OPAMP_INVERTINGINPUT_IO0; //VIM0
   hopamp3.Init.NonInvertingInput = OPAMP_NONINVERTINGINPUT_IO2;
   hopamp3.Init.InternalOutput = ENABLE;
   hopamp3.Init.TimerControlledMuxmode = OPAMP_TIMERCONTROLLEDMUXMODE_DISABLE;
-  hopamp3.Init.PgaConnect = OPAMP_PGA_CONNECT_INVERTINGINPUT_IO0_BIAS;
-  hopamp3.Init.PgaGain = OPAMP_PGA_GAIN_32_OR_MINUS_31;
-  hopamp3.Init.UserTrimming = OPAMP_TRIMMING_FACTORY;
+  hopamp3.Init.PgaConnect = OPAMP_PGA_CONNECT_INVERTINGINPUT_IO0_IO1_BIAS;
+  hopamp3.Init.PgaGain = OPAMP_PGA_GAIN_16_OR_MINUS_15;
+  hopamp3.Init.UserTrimming = OPAMP_TRIMMING_USER;
   if (HAL_OPAMP_Init(&hopamp3) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  if (HAL_OPAMP_SelfCalibrate(&hopamp3) != HAL_OK)
   {
     Error_Handler();
   }
@@ -538,7 +554,17 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+int _write(int file, char *ptr, int len)
+{
+  (void)file;
+  int DataIdx;
 
+  for (DataIdx = 0; DataIdx < len; DataIdx++)
+  {
+    ITM_SendChar(*ptr++);
+  }
+  return len;
+}
 /* USER CODE END 4 */
 
 /**

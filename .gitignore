@@ -4,3 +4,7 @@
 *.d
 *.orig
 Backup/
+*.bin
+*.elf
+*.list
+*.map
