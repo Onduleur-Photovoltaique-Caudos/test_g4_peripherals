@@ -1,11 +1,11 @@
 #MicroXplorer Configuration settings - do not modify
-ADC3.Channel-9\#ChannelRegularConversion=ADC_CHANNEL_VOPAMP3_ADC3
+ADC3.Channel-11\#ChannelRegularConversion=ADC_CHANNEL_VOPAMP3_ADC3
 ADC3.CommonPathInternal=null|null|null|null
-ADC3.IPParameters=Rank-9\#ChannelRegularConversion,Channel-9\#ChannelRegularConversion,SamplingTime-9\#ChannelRegularConversion,OffsetNumber-9\#ChannelRegularConversion,NbrOfConversionFlag,master,CommonPathInternal
+ADC3.IPParameters=Rank-11\#ChannelRegularConversion,Channel-11\#ChannelRegularConversion,SamplingTime-11\#ChannelRegularConversion,OffsetNumber-11\#ChannelRegularConversion,NbrOfConversionFlag,master,CommonPathInternal
 ADC3.NbrOfConversionFlag=1
-ADC3.OffsetNumber-9\#ChannelRegularConversion=ADC_OFFSET_NONE
-ADC3.Rank-9\#ChannelRegularConversion=1
-ADC3.SamplingTime-9\#ChannelRegularConversion=ADC_SAMPLETIME_6CYCLES_5
+ADC3.OffsetNumber-11\#ChannelRegularConversion=ADC_OFFSET_NONE
+ADC3.Rank-11\#ChannelRegularConversion=1
+ADC3.SamplingTime-11\#ChannelRegularConversion=ADC_SAMPLETIME_6CYCLES_5
 ADC3.master=1
 CAD.formats=
 CAD.pinconfig=
@@ -141,7 +141,7 @@ ProjectManager.ToolChainLocation=
 ProjectManager.UAScriptAfterPath=C\:\\Users\\josel\\hobby\\dev_stm32\\test_g4_boot_comm\\Core\\Src\\cpcpp.bat
 ProjectManager.UAScriptBeforePath=C\:\\Users\\josel\\hobby\\dev_stm32\\test_g4_boot_comm\\Core\\Src\\cpc.bat
 ProjectManager.UnderRoot=true
-ProjectManager.functionlistsort=1-SystemClock_Config-RCC-false-HAL-false,2-MX_GPIO_Init-GPIO-false-HAL-true,3-MX_I2C1_Init-I2C1-false-HAL-true,4-MX_USART2_UART_Init-USART2-false-HAL-true,5-MX_OPAMP3_Init-OPAMP3-false-HAL-true,6-MX_ADC3_Init-ADC3-false-HAL-true,7-MX_COMP1_Init-COMP1-false-HAL-true,7-MX_DAC1_Init-DAC1-false-HAL-true
+ProjectManager.functionlistsort=1-SystemClock_Config-RCC-false-HAL-false,2-MX_GPIO_Init-GPIO-false-HAL-true,3-MX_I2C1_Init-I2C1-false-HAL-true,4-MX_USART2_UART_Init-USART2-false-HAL-true,5-MX_OPAMP3_Init-OPAMP3-false-HAL-true,6-MX_ADC3_Init-ADC3-false-HAL-true,7-MX_DAC1_Init-DAC1-false-HAL-true
 RCC.ADC12Freq_Value=80000000
 RCC.ADC345Freq_Value=80000000
 RCC.AHBFreq_Value=80000000
