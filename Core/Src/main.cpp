@@ -47,6 +47,8 @@ static Integer Int;
 /* Private variables ---------------------------------------------------------*/
 ADC_HandleTypeDef hadc3;
 
+DAC_HandleTypeDef hdac1;
+
 I2C_HandleTypeDef hi2c1;
 
 OPAMP_HandleTypeDef hopamp3;
@@ -64,6 +66,7 @@ static void MX_I2C1_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_OPAMP3_Init(void);
 static void MX_ADC3_Init(void);
+static void MX_DAC1_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -76,6 +79,11 @@ void delay_us_DWT(unsigned long  uSec)
 	volatile uint32_t start = DWT->CYCCNT;
 	do {
 	} while (DWT->CYCCNT - start < cycles);
+}
+
+void delay_ms_DWT(unsigned long  mSec)
+{
+	delay_us_DWT(mSec * 1000);
 }
 
 #define SLOTS 4
@@ -104,9 +112,9 @@ unsigned int get_us_DWT(int slot)
 
 void doPin(GPIO_TypeDef* port, uint16_t pin){
 	HAL_GPIO_WritePin(port, pin, GPIO_PIN_SET);
-	HAL_Delay(1000);
+	delay_ms_DWT(1000);
 	HAL_GPIO_WritePin(port, pin, GPIO_PIN_RESET);
-	HAL_Delay(1000);
+	delay_ms_DWT(1000);
 }
 void doPinFast(GPIO_TypeDef* port, uint16_t pin){
 	HAL_GPIO_WritePin(port, pin, GPIO_PIN_SET);
@@ -156,6 +164,7 @@ int main(void)
   MX_USART2_UART_Init();
   MX_OPAMP3_Init();
   MX_ADC3_Init();
+  MX_DAC1_Init();
   /* USER CODE BEGIN 2 */
 
   HAL_OPAMP_Start(&hopamp3);
@@ -198,15 +207,18 @@ int main(void)
 #define start_message "adc value:"
   statusTransmit = HAL_UART_Transmit(&huart2,(uint8_t*)start_message, strlen(start_message),1000);
 
+
+  HAL_ADCEx_Calibration_Start(&hadc3, ADC_SINGLE_ENDED);
   HAL_ADC_Start(&hadc3);
   HAL_ADC_PollForConversion(&hadc3, 1000);
   uint32_t value = HAL_ADC_GetValue(&hadc3);
-  //HAL_ADC_Stop(&hadc3);
+  //HAL_ADC_Stop(&hadc3); // bloque le prog
 
   Int.toAXn(value, buffer, 11, true);
   statusTransmit = HAL_UART_Transmit(&huart2,(uint8_t*)buffer, strlen(buffer),1000);
   statusTransmit = HAL_UART_Transmit(&huart2,(uint8_t*)eol_message, strlen(eol_message),1000);
 
+  //HAL_SuspendTick();
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -214,29 +226,31 @@ int main(void)
   while (1)
   {
 		HAL_GPIO_WritePin(T_PC13_GPIO_Port, T_PC13_Pin, GPIO_PIN_SET); // start at pin 2
-		HAL_Delay(1);
+		delay_ms_DWT(1);
 		HAL_GPIO_WritePin(T_PC13_GPIO_Port, T_PC13_Pin, GPIO_PIN_RESET); // start at pin 2
 		doPinFast(T_PC0_GPIO_Port, T_PC0_Pin);
 
 		HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_SET); // start at pin 2
-		HAL_Delay(200);
+		delay_ms_DWT(200);
+
+
+
+		//LL_ADC_ClearFlag_EOC(hadc3.Instance);
+		//LL_ADC_ClearFlag_EOS(hadc3.Instance);
+		LL_ADC_ClearFlag_OVR(hadc3.Instance);
+		LL_ADC_REG_StartConversion(hadc3.Instance);
+		HAL_ADC_PollForConversion(&hadc3, 1000);
+		// vref: value 0x5a5
+		value = HAL_ADC_GetValue(&hadc3);
+		valueGlobal = value;
+		//HAL_ADC_Stop(&hadc3);
+
+		Int.toAXn(value, buffer, 11, true);
+		statusTransmit = HAL_UART_Transmit(&huart2,(uint8_t*)buffer, strlen(buffer),1000);
+		statusTransmit = HAL_UART_Transmit(&huart2,(uint8_t*)eol_message, strlen(eol_message),1000);
+
 		HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_RESET); // start at pin 2
-		HAL_Delay(200);
-
-
-	  //LL_ADC_ClearFlag_EOC(hadc3.Instance);
-	  //LL_ADC_ClearFlag_EOS(hadc3.Instance);
-	  LL_ADC_ClearFlag_OVR(hadc3.Instance);
-      LL_ADC_REG_StartConversion(hadc3.Instance);
-	  HAL_ADC_PollForConversion(&hadc3, 1000);
-	  // vref: value 0x5a5
-	  value = HAL_ADC_GetValue(&hadc3);
-	  valueGlobal = value;
-	  //HAL_ADC_Stop(&hadc3);
-
-	  Int.toAXn(value, buffer, 11, true);
-	  statusTransmit = HAL_UART_Transmit(&huart2,(uint8_t*)buffer, strlen(buffer),1000);
-	  statusTransmit = HAL_UART_Transmit(&huart2,(uint8_t*)eol_message, strlen(eol_message),1000);
+		delay_ms_DWT(200);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -281,7 +295,7 @@ void SystemClock_Config(void)
                               |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
-  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
+  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
 
   if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK)
@@ -344,7 +358,7 @@ static void MX_ADC3_Init(void)
   */
   sConfig.Channel = ADC_CHANNEL_VOPAMP3_ADC3;
   sConfig.Rank = ADC_REGULAR_RANK_1;
-  sConfig.SamplingTime = ADC_SAMPLETIME_2CYCLES_5;
+  sConfig.SamplingTime = ADC_SAMPLETIME_6CYCLES_5;
   sConfig.SingleDiff = ADC_SINGLE_ENDED;
   sConfig.OffsetNumber = ADC_OFFSET_NONE;
   sConfig.Offset = 0;
@@ -355,6 +369,53 @@ static void MX_ADC3_Init(void)
   /* USER CODE BEGIN ADC3_Init 2 */
 
   /* USER CODE END ADC3_Init 2 */
+
+}
+
+/**
+  * @brief DAC1 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_DAC1_Init(void)
+{
+
+  /* USER CODE BEGIN DAC1_Init 0 */
+
+  /* USER CODE END DAC1_Init 0 */
+
+  DAC_ChannelConfTypeDef sConfig = {0};
+
+  /* USER CODE BEGIN DAC1_Init 1 */
+
+  /* USER CODE END DAC1_Init 1 */
+
+  /** DAC Initialization
+  */
+  hdac1.Instance = DAC1;
+  if (HAL_DAC_Init(&hdac1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  /** DAC channel OUT1 config
+  */
+  sConfig.DAC_HighFrequency = DAC_HIGH_FREQUENCY_INTERFACE_MODE_AUTOMATIC;
+  sConfig.DAC_DMADoubleDataMode = DISABLE;
+  sConfig.DAC_SignedFormat = DISABLE;
+  sConfig.DAC_SampleAndHold = DAC_SAMPLEANDHOLD_DISABLE;
+  sConfig.DAC_Trigger = DAC_TRIGGER_NONE;
+  sConfig.DAC_Trigger2 = DAC_TRIGGER_NONE;
+  sConfig.DAC_OutputBuffer = DAC_OUTPUTBUFFER_DISABLE;
+  sConfig.DAC_ConnectOnChipPeripheral = DAC_CHIPCONNECT_INTERNAL;
+  sConfig.DAC_UserTrimming = DAC_TRIMMING_FACTORY;
+  if (HAL_DAC_ConfigChannel(&hdac1, &sConfig, DAC_CHANNEL_1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN DAC1_Init 2 */
+
+  /* USER CODE END DAC1_Init 2 */
 
 }
 
@@ -374,7 +435,7 @@ static void MX_I2C1_Init(void)
 
   /* USER CODE END I2C1_Init 1 */
   hi2c1.Instance = I2C1;
-  hi2c1.Init.Timing = 0x10909CEC;
+  hi2c1.Init.Timing = 0x00404C74;
   hi2c1.Init.OwnAddress1 = 0;
   hi2c1.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
   hi2c1.Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;
@@ -436,24 +497,22 @@ static void MX_OPAMP3_Init(void)
   /* USER CODE BEGIN OPAMP3_Init 1 */
 #else
 // the following line: not generated
-	hopamp3.Init.InvertingInput = OPAMP_INVERTINGINPUT_IO0; //VIM0
+	//hopamp3.Init.InvertingInput = OPAMP_INVERTINGINPUT_IO0; //VIM0
 	// with gain 32 : reading is 0x120 for 1A into 0.01 ohms
 
   /* USER CODE END OPAMP3_Init 1 */
   hopamp3.Instance = OPAMP3;
   hopamp3.Init.PowerMode = OPAMP_POWERMODE_NORMALSPEED;
   hopamp3.Init.Mode = OPAMP_PGA_MODE;
-  hopamp3.Init.NonInvertingInput = OPAMP_NONINVERTINGINPUT_IO2;
+  hopamp3.Init.NonInvertingInput = OPAMP_NONINVERTINGINPUT_IO0;
   hopamp3.Init.InternalOutput = ENABLE;
   hopamp3.Init.TimerControlledMuxmode = OPAMP_TIMERCONTROLLEDMUXMODE_DISABLE;
-  hopamp3.Init.PgaConnect = OPAMP_PGA_CONNECT_INVERTINGINPUT_IO0_IO1_BIAS;
+  hopamp3.Init.PgaConnect = OPAMP_PGA_CONNECT_INVERTINGINPUT_IO0_BIAS;
   hopamp3.Init.PgaGain = OPAMP_PGA_GAIN_16_OR_MINUS_15;
   hopamp3.Init.UserTrimming = OPAMP_TRIMMING_USER;
+  hopamp3.Init.TrimmingValueP = 17;
+  hopamp3.Init.TrimmingValueN = 17;
   if (HAL_OPAMP_Init(&hopamp3) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  if (HAL_OPAMP_SelfCalibrate(&hopamp3) != HAL_OK)
   {
     Error_Handler();
   }
