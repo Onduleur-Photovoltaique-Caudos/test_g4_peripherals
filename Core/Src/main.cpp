@@ -123,7 +123,7 @@ void doPinFast(GPIO_TypeDef* port, uint16_t pin){
 	delay_us_DWT(1);
 }
 
-uint32_t valueGlobal;
+volatile uint32_t valueGlobal;
 
 /* USER CODE END 0 */
 
