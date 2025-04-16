@@ -49,13 +49,14 @@ extern "C" {
 
 /* USER CODE END EM */
 
-void HAL_HRTIM_MspPostInit(HRTIM_HandleTypeDef *hhrtim);
-
 /* Exported functions prototypes ---------------------------------------------*/
 void Error_Handler(void);
 
 /* USER CODE BEGIN EFP */
-
+//extern volatile int mutexStats;
+void start_us_DWT(int slot);
+unsigned int get_us_DWT(int slot);
+void delay_us_DWT(unsigned long  uSec);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
@@ -65,6 +66,8 @@ void Error_Handler(void);
 #define T_PC0_GPIO_Port GPIOC
 #define LD2_Pin GPIO_PIN_5
 #define LD2_GPIO_Port GPIOA
+#define SYNC_Pin GPIO_PIN_10
+#define SYNC_GPIO_Port GPIOA
 
 /* USER CODE BEGIN Private defines */
 

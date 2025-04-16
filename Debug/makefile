@@ -1,6 +1,6 @@
 ################################################################################
 # Automatically-generated file. Do not edit!
-# Toolchain: GNU Tools for STM32 (12.3.rel1)
+# Toolchain: GNU Tools for STM32 (13.3.rel1)
 ################################################################################
 
 -include ../makefile.init
@@ -78,15 +78,14 @@ test_g4_boot_comm.list \
 
 
 # All Target
-all:
-	+@$(MAKE) --no-print-directory main-build && $(MAKE) --no-print-directory post-build
+all: main-build
 
 # Main-build Target
 main-build: test_g4_boot_comm.elf secondary-outputs
 
 # Tool invocations
-test_g4_boot_comm.elf test_g4_boot_comm.map: $(OBJS) $(USER_OBJS) C:\Users\josel\hobby\dev_stm32\test_g4_boot_comm\STM32G474RETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-g++ -o "test_g4_boot_comm.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\josel\hobby\dev_stm32\test_g4_boot_comm\STM32G474RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="test_g4_boot_comm.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -lstdc++ -lsupc++ -Wl,--end-group
+test_g4_boot_comm.elf test_g4_boot_comm.map: $(OBJS) $(USER_OBJS) C:\Users\josel\hobby_w\Onduleur\test_g4_peripherals\STM32G474RETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-g++ -o "test_g4_boot_comm.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\josel\hobby_w\Onduleur\test_g4_peripherals\STM32G474RETX_FLASH.ld" -Wl,-Map="test_g4_boot_comm.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -lstdc++ -lsupc++ -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
@@ -105,10 +104,6 @@ clean:
 	-$(RM) default.size.stdout test_g4_boot_comm.elf test_g4_boot_comm.list test_g4_boot_comm.map
 	-@echo ' '
 
-post-build:
-	arm-none-eabi-objcopy -O binary $(BUILD_ARTIFACT_NAME).elf $(BUILD_ARTIFACT_NAME).bin
-	-@echo ' '
-
 secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST)
 
 fail-specified-linker-script-missing:
@@ -118,6 +113,6 @@ fail-specified-linker-script-missing:
 warn-no-linker-script-specified:
 	@echo 'Warning: No linker script specified. Check the linker settings in the build configuration.'
 
-.PHONY: all clean dependents main-build fail-specified-linker-script-missing warn-no-linker-script-specified post-build
+.PHONY: all clean dependents main-build fail-specified-linker-script-missing warn-no-linker-script-specified
 
 -include ../makefile.targets

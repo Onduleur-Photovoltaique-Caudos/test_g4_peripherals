@@ -1,0 +1,98 @@
+Configuration	test_g4_boot_comm
+STM32CubeMX 	6.14.0
+Date	04/13/2025
+MCU	STM32G474RETx
+
+
+
+PERIPHERALS	MODES	FUNCTIONS	PINS
+ADC3	IN5 Single-ended	ADC3_IN5	PB13
+DAC1	OUT1 Connected to on chip-peripherals only	DAC1_VS_DACI1	VP_DAC1_VS_DACI1
+HRTIM1	TE1 output active	HRTIM1_CHE1	PC8
+I2C1	I2C	I2C1_SCL	PA15
+I2C1	I2C	I2C1_SDA	PB7
+SYS	Trace Asynchronous Sw	SYS_JTMS-SWDIO	PA13
+SYS	Trace Asynchronous Sw	SYS_JTCK-SWCLK	PA14
+SYS	Trace Asynchronous Sw	SYS_JTDO-SWO	PB3
+SYS	SysTick	SYS_VS_Systick	VP_SYS_VS_Systick
+SYS	Dead Battery Signals disabled	SYS_VS_DBSignals	VP_SYS_VS_DBSignals
+USART2	Asynchronous	USART2_RX	PA3
+USART2	Asynchronous	USART2_TX	PA2
+
+
+
+Pin Nb	PINs	FUNCTIONs	LABELs
+2	PC13	GPIO_Output	T_PC13
+8	PC0	GPIO_Output	T_PC0
+14	PA2	USART2_TX	
+17	PA3	USART2_RX	
+19	PA5	GPIO_Output	LD2
+25	PB1*	OPAMP3_VOUT	
+30	PB10*	OPAMP3_VINM1	
+35	PB13	ADC3_IN5	
+40	PC8	HRTIM1_CHE1	
+44	PA10	GPIO_Output	SYNC
+49	PA13	SYS_JTMS-SWDIO	
+50	PA14	SYS_JTCK-SWCLK	
+51	PA15	I2C1_SCL	
+56	PB3	SYS_JTDO-SWO	
+60	PB7	I2C1_SDA	
+PERIPHERALS	MODES	FUNCTIONS	PINS
+ADC3	IN5 Single-ended	ADC3_IN5	PB13
+DAC1	OUT1 Connected to on chip-peripherals only	DAC1_VS_DACI1	VP_DAC1_VS_DACI1
+HRTIM1	TE1 output active	HRTIM1_CHE1	PC8
+I2C1	I2C	I2C1_SCL	PA15
+I2C1	I2C	I2C1_SDA	PB7
+SYS	Trace Asynchronous Sw	SYS_JTMS-SWDIO	PA13
+SYS	Trace Asynchronous Sw	SYS_JTCK-SWCLK	PA14
+SYS	Trace Asynchronous Sw	SYS_JTDO-SWO	PB3
+SYS	SysTick	SYS_VS_Systick	VP_SYS_VS_Systick
+SYS	Dead Battery Signals disabled	SYS_VS_DBSignals	VP_SYS_VS_DBSignals
+USART2	Asynchronous	USART2_RX	PA3
+USART2	Asynchronous	USART2_TX	PA2
+
+
+
+Pin Nb	PINs	FUNCTIONs	LABELs
+2	PC13	GPIO_Output	T_PC13
+8	PC0	GPIO_Output	T_PC0
+14	PA2	USART2_TX	
+17	PA3	USART2_RX	
+19	PA5	GPIO_Output	LD2
+25	PB1*	OPAMP3_VOUT	
+30	PB10*	OPAMP3_VINM1	
+35	PB13	ADC3_IN5	
+40	PC8	HRTIM1_CHE1	
+44	PA10	GPIO_Output	SYNC
+49	PA13	SYS_JTMS-SWDIO	
+50	PA14	SYS_JTCK-SWCLK	
+51	PA15	I2C1_SCL	
+56	PB3	SYS_JTDO-SWO	
+60	PB7	I2C1_SDA	
+
+
+
+SOFTWARE PROJECT
+
+Project Settings : 
+Project Name : test_g4_boot_comm
+Project Folder : C:\Users\josel\hobby_w\Onduleur\test_g4_peripherals
+Toolchain / IDE : STM32CubeIDE
+Firmware Package Name and Version : STM32Cube FW_G4 V1.6.1
+
+
+Code Generation Settings : 
+STM32Cube MCU packages and embedded software packs : Copy only the necessary library files
+Generate peripheral initialization as a pair of '.c/.h' files per peripheral : Yes
+Backup previously generated files when re-generating : Yes
+Delete previously generated files when not re-generated : Yes
+Set all free pins as analog (to optimize the power consumption) : No
+
+
+Toolchains Settings : 
+Compiler Optimizations : 
+
+
+
+
+
