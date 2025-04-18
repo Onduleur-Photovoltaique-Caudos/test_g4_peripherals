@@ -206,8 +206,8 @@ int main(void)
 
   HAL_ADCEx_Calibration_Start(&hadc3, ADC_SINGLE_ENDED);
 
-	// tim2 for ADC DMA
-	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1); // PA0
+	// tim1 for ADC DMA
+	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1); // PA7
 	// tim2 for ADC DMA
 	HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1); // PA0
 
