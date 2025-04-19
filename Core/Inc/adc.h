@@ -43,6 +43,7 @@ void MX_ADC3_Init(void);
 /* USER CODE BEGIN Prototypes */
 void enableADCIT_EOC(ADC_HandleTypeDef* adcHandle);
 bool isADC_EOC(ADC_HandleTypeDef* adcHandle);
+void resetADCOverrun(ADC_HandleTypeDef* adcHandle);
 /* USER CODE END Prototypes */
 
 #ifdef __cplusplus

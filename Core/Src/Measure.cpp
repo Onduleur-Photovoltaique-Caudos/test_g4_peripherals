@@ -12,9 +12,9 @@ extern "C"
 
 #include "Measure.h"
 
-uint16_t g_ADCBufferM[ADC_BUFFERM_LENGTH*2];
-uint16_t * pM_VIN = &g_ADCBufferM[0];
-uint16_t * pM_VIN2 = &g_ADCBufferM[1];
+uint16_t g_ADCBufferM[ADC_BUFFERM_LENGTH*4];
+static volatile uint16_t * pM_VIN = &g_ADCBufferM[0];
+static volatile uint16_t * pM_VIN2 = &g_ADCBufferM[1];
 
 bool bErrorDMA;
 int  bErrorADC;
@@ -35,6 +35,7 @@ void   HAL_ADC_ErrorCallback(ADC_HandleTypeDef *hadc) // data overrun
 	if (hadc->ErrorCode == HAL_ADC_ERROR_DMA) {
 		bErrorDMA = true;
 	} else if (hadc->ErrorCode == HAL_ADC_ERROR_OVR) {
+		resetADCOverrun(hadc);
 		bErrorADC = 1;
 	} else {
 		bErrorADC = 2;

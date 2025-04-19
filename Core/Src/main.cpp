@@ -69,15 +69,15 @@ void SystemClock_Config(void);
 /* USER CODE BEGIN 0 */
 void delay_us_DWT(unsigned long  uSec)
 {
-	volatile uint32_t cycles = (SystemCoreClock / 1000000L)*uSec;
-	volatile uint32_t start = DWT->CYCCNT;
-	do {
-	} while (DWT->CYCCNT - start < cycles);
+    volatile uint32_t cycles = (SystemCoreClock / 1000000L)*uSec;
+    volatile uint32_t start = DWT->CYCCNT;
+    do {
+    } while (DWT->CYCCNT - start < cycles);
 }
 
 void delay_ms_DWT(unsigned long  mSec)
 {
-	delay_us_DWT(mSec * 1000);
+    delay_us_DWT(mSec * 1000);
 }
 
 #define SLOTS 4
@@ -85,36 +85,36 @@ static volatile uint32_t start[4];
 
 void start_us_DWT(int slot)
 {
-	if (slot < SLOTS) {
-		start[slot] = DWT->CYCCNT;
-	}
+    if (slot < SLOTS) {
+        start[slot] = DWT->CYCCNT;
+    }
 }
 
 unsigned int get_us_DWT(int slot)
 {
-	if (slot < SLOTS) {
-		unsigned long long val;
-		if (DWT->CYCCNT < start[slot]) {
-			val = (DWT->CYCCNT - start[slot]) + (1LL << 32);
-		} else {
-			val = (DWT->CYCCNT - start[slot]);
-		}
-		return val * 1000000L / SystemCoreClock;
-	}
-	return 0xFFFFFFFF;
+    if (slot < SLOTS) {
+        unsigned long long val;
+        if (DWT->CYCCNT < start[slot]) {
+            val = (DWT->CYCCNT - start[slot]) + (1LL << 32);
+        } else {
+            val = (DWT->CYCCNT - start[slot]);
+        }
+        return val * 1000000L / SystemCoreClock;
+    }
+    return 0xFFFFFFFF;
 }
 
 void doPin(GPIO_TypeDef* port, uint16_t pin){
-	HAL_GPIO_WritePin(port, pin, GPIO_PIN_SET);
-	delay_ms_DWT(1000);
-	HAL_GPIO_WritePin(port, pin, GPIO_PIN_RESET);
-	delay_ms_DWT(1000);
+    HAL_GPIO_WritePin(port, pin, GPIO_PIN_SET);
+    delay_ms_DWT(1000);
+    HAL_GPIO_WritePin(port, pin, GPIO_PIN_RESET);
+    delay_ms_DWT(1000);
 }
 void doPinFast(GPIO_TypeDef* port, uint16_t pin){
-	HAL_GPIO_WritePin(port, pin, GPIO_PIN_SET);
-	delay_us_DWT(10);
-	HAL_GPIO_WritePin(port, pin, GPIO_PIN_RESET);
-	delay_us_DWT(1);
+    HAL_GPIO_WritePin(port, pin, GPIO_PIN_SET);
+    delay_us_DWT(10);
+    HAL_GPIO_WritePin(port, pin, GPIO_PIN_RESET);
+    delay_us_DWT(1);
 }
 
 volatile uint32_t valueGlobal;
@@ -129,11 +129,11 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-	CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
-	DWT->CYCCNT = 0;
+    CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
+    DWT->CYCCNT = 0;
   // Enable cycle counter
-	DWT->CTRL &= ~DWT_CTRL_CYCCNTENA_Msk;
-	DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk;
+    DWT->CTRL &= ~DWT_CTRL_CYCCNTENA_Msk;
+    DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk;
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -206,10 +206,9 @@ int main(void)
 
   HAL_ADCEx_Calibration_Start(&hadc3, ADC_SINGLE_ENDED);
 
-	// tim1 for ADC DMA
-	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1); // PA7
-	// tim2 for ADC DMA
-	HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1); // PA0
+    // tim1 for ADC DMA
+    HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1); // PA7
+
 
   // control timer for tim2
   HAL_HRTIM_WaveformOutputStart(&hhrtim1, HRTIM_OUTPUT_TA1); // PA8
@@ -219,9 +218,11 @@ int main(void)
   HAL_HRTIM_WaveformOutputStart(&hhrtim1, HRTIM_OUTPUT_TE1); // PC8
   HAL_HRTIM_SimpleOCStart(&hhrtim1, HRTIM_TIMERINDEX_TIMER_E, HRTIM_COMPAREUNIT_1);
 
-  HAL_ADC_Start(&hadc3);
-  HAL_ADC_Start_DMA(&hadc3, (uint32_t*) g_ADCBufferM, ADC_BUFFERM_LENGTH);
+  //HAL_ADC_Start(&hadc3);
+  HAL_ADC_Start_DMA(&hadc3, (uint32_t*) g_ADCBufferM, ADC_BUFFERM_LENGTH *2 );
 
+    // tim2 for ADC DMA
+  HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1); // PA0 and ADC start
 
   //HAL_SuspendTick();
   /* USER CODE END 2 */
@@ -235,17 +236,17 @@ int main(void)
 //		HAL_GPIO_WritePin(T_PC13_GPIO_Port, T_PC13_Pin, GPIO_PIN_RESET); // start at pin 2
 //		doPinFast(T_PC0_GPIO_Port, T_PC0_Pin);
 
-		HAL_GPIO_WritePin(SYNC_GPIO_Port, SYNC_Pin, GPIO_PIN_SET); // start at pin PA10
-		delay_us_DWT(10);
-		HAL_GPIO_WritePin(SYNC_GPIO_Port, SYNC_Pin, GPIO_PIN_RESET); // start at pin PA10
+        HAL_GPIO_WritePin(SYNC_GPIO_Port, SYNC_Pin, GPIO_PIN_SET); // start at pin PA10
+        delay_us_DWT(10);
+        HAL_GPIO_WritePin(SYNC_GPIO_Port, SYNC_Pin, GPIO_PIN_RESET); // start at pin PA10
 
-		HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_SET); // start at pin 2
-		delay_us_DWT(20);
+        HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_SET); // start at pin 2
+        delay_us_DWT(20);
 
 
 
-		HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_RESET); // start at pin 2
-		delay_us_DWT(20);
+        HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_RESET); // start at pin 2
+        delay_us_DWT(20);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
