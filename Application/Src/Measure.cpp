@@ -16,6 +16,8 @@ uint16_t g_ADCBufferM[ADC_BUFFERM_LENGTH*4];
 static volatile uint16_t * pM_VIN = &g_ADCBufferM[0];
 static volatile uint16_t * pM_VIN2 = &g_ADCBufferM[1];
 
+uint32_t statsBuffer[4096];
+
 bool bErrorDMA;
 int  bErrorADC;
 
@@ -54,7 +56,7 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* adcHandle)
 		return;
 	}
 	if (adcHandle == &hadc3) {
-
+		statsBuffer[g_ADCBufferM[0]]++;
 
 		doneADC = true;
 	} else {// end of adc1 processing

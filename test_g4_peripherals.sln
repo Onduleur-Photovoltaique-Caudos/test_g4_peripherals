@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35931.197
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{803FD0C6-D64E-4E16-9DC3-1DAEC859A3D2}") = "test_g4_peripherals", "test_g4_peripherals.vgdbcmake", "{D7037F63-DE25-46E0-9731-3FB3EB7F768E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|VisualGDB = Debug|VisualGDB
+		MinSizeRel|VisualGDB = MinSizeRel|VisualGDB
+		Release|VisualGDB = Release|VisualGDB
+		RelWithDebInfo|VisualGDB = RelWithDebInfo|VisualGDB
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D7037F63-DE25-46E0-9731-3FB3EB7F768E}.Debug|VisualGDB.ActiveCfg = Debug|VisualGDB
+		{D7037F63-DE25-46E0-9731-3FB3EB7F768E}.Debug|VisualGDB.Build.0 = Debug|VisualGDB
+		{D7037F63-DE25-46E0-9731-3FB3EB7F768E}.MinSizeRel|VisualGDB.ActiveCfg = MinSizeRel|VisualGDB
+		{D7037F63-DE25-46E0-9731-3FB3EB7F768E}.MinSizeRel|VisualGDB.Build.0 = MinSizeRel|VisualGDB
+		{D7037F63-DE25-46E0-9731-3FB3EB7F768E}.Release|VisualGDB.ActiveCfg = Release|VisualGDB
+		{D7037F63-DE25-46E0-9731-3FB3EB7F768E}.Release|VisualGDB.Build.0 = Release|VisualGDB
+		{D7037F63-DE25-46E0-9731-3FB3EB7F768E}.RelWithDebInfo|VisualGDB.ActiveCfg = RelWithDebInfo|VisualGDB
+		{D7037F63-DE25-46E0-9731-3FB3EB7F768E}.RelWithDebInfo|VisualGDB.Build.0 = RelWithDebInfo|VisualGDB
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

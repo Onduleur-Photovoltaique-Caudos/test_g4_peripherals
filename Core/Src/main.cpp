@@ -33,7 +33,9 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include "Command.h"
 #include "Integer.h"
+#include "Loop.h"
 #include "Measure.h"
 /* USER CODE END Includes */
 
@@ -183,7 +185,7 @@ int main(void)
   FLASH_OBProgramInitTypeDef obInitRead = {0};
   HAL_FLASHEx_OBGetConfig(&obInitRead);
 
-
+  initializeCommand();
   int statusTransmit;
   char str[] = "start\n\r";
   printf("start SWV\n");
@@ -235,6 +237,7 @@ int main(void)
 //		delay_us_DWT(10);
 //		HAL_GPIO_WritePin(T_PC13_GPIO_Port, T_PC13_Pin, GPIO_PIN_RESET); // start at pin 2
 //		doPinFast(T_PC0_GPIO_Port, T_PC0_Pin);
+    doLoop();
 
         HAL_GPIO_WritePin(SYNC_GPIO_Port, SYNC_Pin, GPIO_PIN_SET); // start at pin PA10
         delay_us_DWT(10);

@@ -2,3 +2,8 @@
 Debug/
 Backup/
 build/
+*.vsidx
+*.VC.opendb
+.vs
+.visualgdb
+TraceReports/
