@@ -8,6 +8,7 @@
 extern "C"
 {
 #include "main.h"
+#include "gpio.h"
 }
 
 #include "Measure.h"
@@ -53,13 +54,19 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* adcHandle)
 		//doPsenseToggle();
 		//Error_Handler();// we should not be there
 		countEOC++;
+		doPinFast(SYNC_GPIO_Port, SYNC_Pin);
 		return;
 	}
-	if (adcHandle == &hadc3) {
-		statsBuffer[g_ADCBufferM[0]]++;
-
-		doneADC = true;
-	} else {// end of adc1 processing
+	if (isADC_EOS(adcHandle))	{
+		if (adcHandle == &hadc3) {
+			statsBuffer[g_ADCBufferM[0]]++;
+			doPinFast(SYNC_GPIO_Port, SYNC_Pin);
+			doneADC = true;
+		}	else {
+			// end of adc1 processing
+			Error_Handler();
+		}
+	}	else {
 		Error_Handler();
 	}
 }

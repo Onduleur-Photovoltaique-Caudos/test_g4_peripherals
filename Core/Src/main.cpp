@@ -106,18 +106,6 @@ unsigned int get_us_DWT(int slot)
     return 0xFFFFFFFF;
 }
 
-void doPin(GPIO_TypeDef* port, uint16_t pin){
-    HAL_GPIO_WritePin(port, pin, GPIO_PIN_SET);
-    delay_ms_DWT(1000);
-    HAL_GPIO_WritePin(port, pin, GPIO_PIN_RESET);
-    delay_ms_DWT(1000);
-}
-void doPinFast(GPIO_TypeDef* port, uint16_t pin){
-    HAL_GPIO_WritePin(port, pin, GPIO_PIN_SET);
-    delay_us_DWT(10);
-    HAL_GPIO_WritePin(port, pin, GPIO_PIN_RESET);
-    delay_us_DWT(1);
-}
 
 volatile uint32_t valueGlobal;
 
@@ -208,8 +196,6 @@ int main(void)
 
   HAL_ADCEx_Calibration_Start(&hadc3, ADC_SINGLE_ENDED);
 
-    // tim1 for ADC DMA
-    HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1); // PA7
 
 
   // control timer for tim2
@@ -226,6 +212,10 @@ int main(void)
     // tim2 for ADC DMA
   HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1); // PA0 and ADC start
 
+
+	HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_1); // Start CH1N
+
+	
   //HAL_SuspendTick();
   /* USER CODE END 2 */
 
@@ -236,7 +226,7 @@ int main(void)
 //		HAL_GPIO_WritePin(T_PC13_GPIO_Port, T_PC13_Pin, GPIO_PIN_SET); // start at pin 2
 //		delay_us_DWT(10);
 //		HAL_GPIO_WritePin(T_PC13_GPIO_Port, T_PC13_Pin, GPIO_PIN_RESET); // start at pin 2
-//		doPinFast(T_PC0_GPIO_Port, T_PC0_Pin);
+		doPinFast(T_PC0_GPIO_Port, T_PC0_Pin);
     doLoop();
 
         HAL_GPIO_WritePin(SYNC_GPIO_Port, SYNC_Pin, GPIO_PIN_SET); // start at pin PA10

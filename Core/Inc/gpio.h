@@ -44,6 +44,8 @@ void doDisableSwitches();
 void doLedOn();
 void doLedOff();
 
+void doPin(GPIO_TypeDef* port, uint16_t pin);
+void doPinFast(GPIO_TypeDef* port, uint16_t pin);
 /* USER CODE END Prototypes */
 
 #ifdef __cplusplus

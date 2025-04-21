@@ -17,7 +17,20 @@
     <NestedLiveVariables>
       <NestedVariableSettingsCollection>
         <ID>com.sysprogs.AllGlobals</ID>
-        <Variables />
+        <Variables>
+          <LiveVariable>
+            <Expression>g_ADCBufferM</Expression>
+            <Type>com.sysprogs.types.builtin.UInt64</Type>
+            <Enabled>true</Enabled>
+            <Breakpoint>
+              <ComparisonMode>Equals</ComparisonMode>
+              <Enabled>false</Enabled>
+            </Breakpoint>
+            <Plot>false</Plot>
+            <IsCollapsed>false</IsCollapsed>
+            <IsFavorite>false</IsFavorite>
+          </LiveVariable>
+        </Variables>
       </NestedVariableSettingsCollection>
       <NestedVariableSettingsCollection>
         <ID>com.sysprogs.SpecificVariables</ID>
@@ -29,10 +42,43 @@
       </NestedVariableSettingsCollection>
     </NestedLiveVariables>
     <LiveVariablePreferences>
-      <ViewMode>SpecificVariables</ViewMode>
+      <ViewMode>AllGlobals</ViewMode>
       <FavoritesOnly>false</FavoritesOnly>
     </LiveVariablePreferences>
     <Suggestions />
-    <HardwareRegisters />
+    <HardwareRegisters>
+      <HardwareRegisterRecord>
+        <Name>TIM1.TIM1_CCER.CC6P</Name>
+        <State>
+          <IsFavorite>false</IsFavorite>
+          <IsLive>false</IsLive>
+          <LastUsed>133897400781750000</LastUsed>
+        </State>
+      </HardwareRegisterRecord>
+      <HardwareRegisterRecord>
+        <Name>TIM1.TIM1_CCER.CC3E</Name>
+        <State>
+          <IsFavorite>false</IsFavorite>
+          <IsLive>false</IsLive>
+          <LastUsed>133897403080401423</LastUsed>
+        </State>
+      </HardwareRegisterRecord>
+      <HardwareRegisterRecord>
+        <Name>TIM1.TIM1_CCER</Name>
+        <State>
+          <IsFavorite>false</IsFavorite>
+          <IsLive>false</IsLive>
+          <LastUsed>0</LastUsed>
+        </State>
+      </HardwareRegisterRecord>
+      <HardwareRegisterRecord>
+        <Name>TIM1.TIM1_CCER.CC1E</Name>
+        <State>
+          <IsFavorite>false</IsFavorite>
+          <IsLive>false</IsLive>
+          <LastUsed>133897420454715907</LastUsed>
+        </State>
+      </HardwareRegisterRecord>
+    </HardwareRegisters>
   </DebugPreferences>
 </VisualGDBUserPreferences>

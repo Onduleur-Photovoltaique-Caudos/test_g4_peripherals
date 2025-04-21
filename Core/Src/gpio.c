@@ -22,7 +22,7 @@
 #include "gpio.h"
 
 /* USER CODE BEGIN 0 */
-
+#include "main.h"
 /* USER CODE END 0 */
 
 /*----------------------------------------------------------------------------*/
@@ -76,6 +76,18 @@ void MX_GPIO_Init(void)
 
 /* USER CODE BEGIN 2 */
 
+void doPin(GPIO_TypeDef* port, uint16_t pin) {
+	HAL_GPIO_WritePin(port, pin, GPIO_PIN_SET);
+	delay_ms_DWT(1000);
+	HAL_GPIO_WritePin(port, pin, GPIO_PIN_RESET);
+	delay_ms_DWT(1000);
+}
+void doPinFast(GPIO_TypeDef* port, uint16_t pin) {
+	HAL_GPIO_WritePin(port, pin, GPIO_PIN_SET);
+	delay_us_DWT(1);
+	HAL_GPIO_WritePin(port, pin, GPIO_PIN_RESET);
+	delay_us_DWT(1);
+}
 void doDisableSwitches()
 {
 	//HAL_GPIO_WritePin(Disable_GPIO_Port, Disable_Pin, GPIO_PIN_SET);   // enable everything

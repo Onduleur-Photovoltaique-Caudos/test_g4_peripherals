@@ -2,7 +2,10 @@ cmake_minimum_required(VERSION 3.15)
 
 project(test_g4_peripherals LANGUAGES C CXX ASM)
 
-find_bsp(ID com.sysprogs.project_importers.stm32.cubemx SOURCE_PROJECT test_g4_peripherals.ioc)
+find_bsp(
+	ID com.sysprogs.project_importers.stm32.cubemx
+	SOURCE_PROJECT test_g4_peripherals.ioc
+	HWREGISTER_LIST_FILE STM32G474.mcudef)
 
 bsp_include_directories(Application/Inc)
 add_bsp_based_executable(
@@ -20,3 +23,4 @@ add_bsp_based_executable(
 target_include_directories(test_g4_peripherals PRIVATE
 	Application/Inc
 	Application/Src)
+set_source_files_properties(${BSP_ROOT}/Core/Inc/Serial.h ${BSP_ROOT}/Core/Inc/Measure.h PROPERTIES HEADER_FILE_ONLY TRUE)
