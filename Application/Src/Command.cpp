@@ -1,7 +1,9 @@
 #include <string.h>
+#include <cstdio>
 
 #include "Command.h"
 #include "CommandPrivate.h"
+#include "Measure.h"
 #include "Serial.h"
 
 #define SERIAL_BUFFER_SIZE 50
@@ -165,9 +167,18 @@ pSerialOutToConsole->puts("    rt\t    z1\t    d1\t    r1\t    v1\t     z2\t    
 }
 
 void measurementsDisplay(int val1, int val2) {
-  pSerialOutToConsole->puts("measurementsDisplay: ");
-  pSerialOutToConsole->puts("val1");
-  pSerialOutToConsole->puts("\t");
-  pSerialOutToConsole->puts("val2");
-  pSerialOutToConsole->puts("\n\r");
+	char message[30];
+	snprintf(message, 30, "%4d, %12d\r\n", 0, statsBuffer[0]);
+	pSerialOutToConsole->puts(message);
+	for (int i = 1; i < 4095; i++)
+#include <cstdio>
+	{
+		if (statsBuffer[i] != 0)
+		{
+			snprintf(message, 30, "%4d, %12d\r\n", i, statsBuffer[i]);
+			pSerialOutToConsole->puts(message);
+		}
+	}
+	snprintf(message, 30, "%4d, %12d\r\n", 4095, statsBuffer[4095]);
+	pSerialOutToConsole->puts(message);
 }

@@ -13,6 +13,7 @@
 #define ADC_BUFFERM_LENGTH 1 // in 32 bits units
 extern uint16_t g_ADCBufferM[];
 
+extern uint32_t statsBuffer[4096];
 
 
 
